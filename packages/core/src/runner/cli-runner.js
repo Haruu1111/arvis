@@ -89,9 +89,14 @@ export class CLIRunner {
         }
         return new Promise((resolve, reject) => {
             log.info({ promptLen: fullPrompt.length, cwd, sandbox: request.sandbox || 'none' }, 'Starting CLI');
+            // On Windows, `claude` is a .cmd shim — spawn can't resolve it without a shell.
+            // On Linux/macOS, direct spawn works and avoids shell overhead.
+            // See: https://github.com/anthropics/claude-code/issues/771
+            const isWindows = process.platform === 'win32';
             const child = spawn(spawnCmd, spawnArgs, {
                 cwd,
                 env: env,
+                shell: isWindows,
                 windowsHide: true,
                 stdio: ['pipe', 'pipe', 'pipe'],
             });
