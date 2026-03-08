@@ -58,7 +58,7 @@ export async function POST(req: NextRequest) {
 
     // Call Resend API if configured
     if (process.env.RESEND_API_KEY && process.env.RESEND_AUDIENCE_ID) {
-      const res = await fetch('https://api.resend.com/audiences/' + process.env.RESEND_AUDIENCE_ID + '/contacts', {
+      const res = await fetch('https://api.resend.com/contacts', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
@@ -66,6 +66,7 @@ export async function POST(req: NextRequest) {
         },
         body: JSON.stringify({
           email: normalizedEmail,
+          audience_id: process.env.RESEND_AUDIENCE_ID,
           unsubscribed: false,
         }),
       });
