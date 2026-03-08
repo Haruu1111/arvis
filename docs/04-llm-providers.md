@@ -22,119 +22,50 @@
 
 ### 1. Claude CLI (Max Subscription — $20/month, unlimited)
 
-Use your Claude Max subscription with Arvis. No per-token cost — just your monthly subscription. This is the cheapest way to run Arvis.
+Use your Claude Pro/Max subscription with Arvis. No per-token cost — just your monthly subscription. This is the cheapest way to run Arvis.
 
-#### Windows
-
-**Step 1: Install Claude Code**
-```
-npm install -g @anthropic-ai/claude-code
-```
-
-**Step 2: Log in**
-```
-claude login
-```
-Your browser opens — sign in with your Anthropic account. Session saves to `C:\Users\YourName\.claude\`
-
-**Step 3: Copy session to a permanent folder**
-```
-xcopy %USERPROFILE%\.claude C:\Users\YourName\.claude-account1 /E /I
-```
-
-**Step 4: Add more accounts (optional — for zero rate limits)**
-```
-rd /s /q %USERPROFILE%\.claude
-claude login
-xcopy %USERPROFILE%\.claude C:\Users\YourName\.claude-account2 /E /I
-```
-Sign in with a different Anthropic account each time. Repeat as many times as you want.
-
-**Step 5: Add to `.env`**
-```env
-CLAUDE_CLI_HOME=C:\Users\YourName\.claude-account1
-CLAUDE_CLI_HOME_1=C:\Users\YourName\.claude-account2
-CLAUDE_CLI_HOME_2=C:\Users\YourName\.claude-account3
-```
-
-#### macOS
+#### Setup (all platforms — Windows, Mac, Linux)
 
 **Step 1: Install Claude Code**
 ```bash
 npm install -g @anthropic-ai/claude-code
 ```
 
-**Step 2: Log in**
+**Step 2: Add an account**
 ```bash
-claude login
+npm run add-account
 ```
-Browser opens — sign in. Session saves to `~/.claude/`
+A browser opens — log in with your Claude account. Auth files save to `data/accounts/acc1/`. Done.
 
-**Step 3: Copy session**
+**Step 3: Add more accounts (optional — for zero rate limits)**
 ```bash
-cp -r ~/.claude ~/claude-account1
+npm run add-account work
+npm run add-account personal
 ```
+Log in with a different Claude account each time. Each gets its own folder in `data/accounts/`.
 
-**Step 4: Add more accounts (optional)**
+**That's it.** No `.env` changes needed — Arvis auto-detects all accounts in `data/accounts/` on startup.
+
+#### Session expired? Re-login:
 ```bash
-rm -rf ~/.claude
-claude login
-cp -r ~/.claude ~/claude-account2
+# Just run add-account again with the same name — it detects existing auth and re-authenticates
+npm run add-account acc1
 ```
 
-**Step 5: Add to `.env`**
+#### Advanced: Manual env var setup
+If you prefer managing account directories yourself:
 ```env
-CLAUDE_CLI_HOME=/Users/yourname/claude-account1
-CLAUDE_CLI_HOME_1=/Users/yourname/claude-account2
-CLAUDE_CLI_HOME_2=/Users/yourname/claude-account3
-```
-
-#### Linux / VPS
-
-**Step 1: Install Claude Code**
-```bash
-npm install -g @anthropic-ai/claude-code
-```
-
-**Step 2: Log in**
-```bash
-claude login
-```
-On a headless server (no browser), this prints a URL — open it on your phone or laptop to complete login.
-
-**Step 3: Copy session**
-```bash
-cp -r ~/.claude /home/you/claude-account1
-```
-
-**Step 4: Add more accounts (optional)**
-```bash
-rm -rf ~/.claude
-claude login
-cp -r ~/.claude /home/you/claude-account2
-```
-
-**Step 5: Add to `.env`**
-```env
-CLAUDE_CLI_HOME=/home/you/claude-account1
-CLAUDE_CLI_HOME_1=/home/you/claude-account2
-CLAUDE_CLI_HOME_2=/home/you/claude-account3
-```
-
-#### Session expired? Re-login a specific account:
-```bash
-# Linux/Mac
-HOME=/home/you/claude-account1 claude login
-
-# Windows
-set HOME=C:\Users\YourName\.claude-account1 && claude login
+CLAUDE_CLI_HOME=/path/to/claude-home-dir
+CLAUDE_CLI_HOME_1=/path/to/second-account
+CLAUDE_CLI_HOME_2=/path/to/third-account
 ```
 
 #### Good to know
-- Each account = one Claude Max subscription ($20/month each)
-- Numbering must be sequential: `_1`, `_2`, `_3` — skip a number and Arvis stops scanning
-- 3 accounts = practically unlimited messages
-- Session folders contain auth tokens — don't share them or commit them to git
+- Each account = one Claude Pro/Max subscription
+- `npm run add-account` auto-names accounts `acc1`, `acc2`, `acc3`... or you can pass a custom name
+- 3 accounts = practically unlimited messages (rate limits rotate between them)
+- Auth folders contain tokens — don't share them or commit them to git
+- On a headless VPS (no browser), the login prints a URL — open it on your phone/laptop to complete
 
 ---
 
@@ -303,31 +234,34 @@ When Arvis has to use a backup provider, it picks the right size model:
 ## Recommended Setups
 
 ### Budget setup (free or almost free)
+```bash
+# Just one Claude CLI account — $20/month, covers most usage
+npm run add-account
+```
 ```env
-# Just Claude CLI — $20/month, covers most usage
-CLAUDE_CLI_HOME=/path/to/claude-account1
-
 # Optional: free local backup
 OLLAMA_BASE_URL=http://localhost:11434
 ```
 
 ### Standard setup (reliable, low cost)
+```bash
+# Primary: 2 Claude CLI accounts (auto-detected, no env vars needed)
+npm run add-account
+npm run add-account backup
+```
 ```env
-# Primary: Claude CLI (free with subscription)
-CLAUDE_CLI_HOME=/path/to/claude-account1
-CLAUDE_CLI_HOME_1=/path/to/claude-account2
-
 # Backup: Anthropic API with cheap model
 ANTHROPIC_API_KEY=sk-ant-xxxxx
 ```
 
 ### Power setup (never rate limited, best quality)
-```env
+```bash
 # 3 Claude CLI accounts
-CLAUDE_CLI_HOME=/path/to/claude-account1
-CLAUDE_CLI_HOME_1=/path/to/claude-account2
-CLAUDE_CLI_HOME_2=/path/to/claude-account3
-
+npm run add-account
+npm run add-account work
+npm run add-account personal
+```
+```env
 # API backup
 ANTHROPIC_API_KEY=sk-ant-main
 ANTHROPIC_API_KEY_1=sk-ant-backup
